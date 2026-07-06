@@ -21,13 +21,13 @@ public class BurgerTest {
     private Bun bunMock;
 
     @Mock
-    private Ingredient ingredientMock1;
+    private Ingredient sauceMock;
 
     @Mock
-    private Ingredient ingredientMock2;
+    private Ingredient cutletMock;
 
     @Mock
-    private Ingredient ingredientMock3;
+    private Ingredient sausageMock;
 
     @Before
     public void setUp() {
@@ -42,29 +42,50 @@ public class BurgerTest {
     }
 
     @Test
-    public void addIngredientShouldAddToList() {
-        burger.addIngredient(ingredientMock1);
+    public void addIngredientShouldIncreaseSize() {
+        burger.addIngredient(sauceMock);
         assertEquals(1, burger.ingredients.size());
-        assertEquals(ingredientMock1, burger.ingredients.get(0));
+    }
+
+    @Test
+    public void addIngredientShouldAddCorrectIngredient() {
+        burger.addIngredient(sauceMock);
+        assertEquals(sauceMock, burger.ingredients.get(0));
     }
 
     @Test
     public void addMultipleIngredientsShouldAddAll() {
-        burger.addIngredient(ingredientMock1);
-        burger.addIngredient(ingredientMock2);
-        burger.addIngredient(ingredientMock3);
+        burger.addIngredient(sauceMock);
+        burger.addIngredient(cutletMock);
+        burger.addIngredient(sausageMock);
         assertEquals(3, burger.ingredients.size());
     }
 
     @Test
-    public void removeIngredientShouldRemoveByIndex() {
-        burger.addIngredient(ingredientMock1);
-        burger.addIngredient(ingredientMock2);
-        burger.addIngredient(ingredientMock3);
+    public void removeIngredientShouldDecreaseSize() {
+        burger.addIngredient(sauceMock);
+        burger.addIngredient(cutletMock);
+        burger.addIngredient(sausageMock);
         burger.removeIngredient(1);
         assertEquals(2, burger.ingredients.size());
-        assertEquals(ingredientMock1, burger.ingredients.get(0));
-        assertEquals(ingredientMock3, burger.ingredients.get(1));
+    }
+
+    @Test
+    public void removeIngredientShouldKeepFirstElement() {
+        burger.addIngredient(sauceMock);
+        burger.addIngredient(cutletMock);
+        burger.addIngredient(sausageMock);
+        burger.removeIngredient(1);
+        assertEquals(sauceMock, burger.ingredients.get(0));
+    }
+
+    @Test
+    public void removeIngredientShouldKeepLastElement() {
+        burger.addIngredient(sauceMock);
+        burger.addIngredient(cutletMock);
+        burger.addIngredient(sausageMock);
+        burger.removeIngredient(1);
+        assertEquals(sausageMock, burger.ingredients.get(1));
     }
 
     @Test(expected = IndexOutOfBoundsException.class)
@@ -73,23 +94,47 @@ public class BurgerTest {
     }
 
     @Test
-    public void moveIngredientShouldMoveToNewPosition() {
-        when(ingredientMock1.getName()).thenReturn("соус");
-        when(ingredientMock2.getName()).thenReturn("котлета");
-        when(ingredientMock3.getName()).thenReturn("сосиска");
+    public void moveIngredientShouldSetFirstElementCorrectly() {
+        when(sauceMock.getName()).thenReturn("соус");
+        when(cutletMock.getName()).thenReturn("котлета");
+        when(sausageMock.getName()).thenReturn("сосиска");
 
-        burger.addIngredient(ingredientMock1);
-        burger.addIngredient(ingredientMock2);
-        burger.addIngredient(ingredientMock3);
+        burger.addIngredient(sauceMock);
+        burger.addIngredient(cutletMock);
+        burger.addIngredient(sausageMock);
         burger.moveIngredient(0, 2);
-        assertEquals(ingredientMock2, burger.ingredients.get(0));
-        assertEquals(ingredientMock3, burger.ingredients.get(1));
-        assertEquals(ingredientMock1, burger.ingredients.get(2));
+        assertEquals(cutletMock, burger.ingredients.get(0));
+    }
+
+    @Test
+    public void moveIngredientShouldSetSecondElementCorrectly() {
+        when(sauceMock.getName()).thenReturn("соус");
+        when(cutletMock.getName()).thenReturn("котлета");
+        when(sausageMock.getName()).thenReturn("сосиска");
+
+        burger.addIngredient(sauceMock);
+        burger.addIngredient(cutletMock);
+        burger.addIngredient(sausageMock);
+        burger.moveIngredient(0, 2);
+        assertEquals(sausageMock, burger.ingredients.get(1));
+    }
+
+    @Test
+    public void moveIngredientShouldSetThirdElementCorrectly() {
+        when(sauceMock.getName()).thenReturn("соус");
+        when(cutletMock.getName()).thenReturn("котлета");
+        when(sausageMock.getName()).thenReturn("сосиска");
+
+        burger.addIngredient(sauceMock);
+        burger.addIngredient(cutletMock);
+        burger.addIngredient(sausageMock);
+        burger.moveIngredient(0, 2);
+        assertEquals(sauceMock, burger.ingredients.get(2));
     }
 
     @Test(expected = IndexOutOfBoundsException.class)
     public void moveIngredientWithInvalidIndexShouldThrowException() {
-        burger.addIngredient(ingredientMock1);
+        burger.addIngredient(sauceMock);
         burger.moveIngredient(999, 0);
     }
 
@@ -103,23 +148,23 @@ public class BurgerTest {
     @TestCaseName("[{index}] Цена бургера: булка={0}, соус={1}, котлета={2}, сосиска={3} → {4}")
     public void getPriceShouldCalculateCorrectlyWithDifferentValues(
             int bunPrice,
-            int ingredientPrice1,
-            int ingredientPrice2,
-            int ingredientPrice3,
+            int saucePrice,
+            int cutletPrice,
+            int sausagePrice,
             int expected) {
 
-        System.out.println("💰 Цена бургера: булка=" + bunPrice + ", соус=" + ingredientPrice1 +
-                ", котлета=" + ingredientPrice2 + ", сосиска=" + ingredientPrice3 + " → " + expected);
+        System.out.println("💰 Цена бургера: булка=" + bunPrice + ", соус=" + saucePrice +
+                ", котлета=" + cutletPrice + ", сосиска=" + sausagePrice + " → " + expected);
 
         when(bunMock.getPrice()).thenReturn((float) bunPrice);
-        when(ingredientMock1.getPrice()).thenReturn((float) ingredientPrice1);
-        when(ingredientMock2.getPrice()).thenReturn((float) ingredientPrice2);
-        when(ingredientMock3.getPrice()).thenReturn((float) ingredientPrice3);
+        when(sauceMock.getPrice()).thenReturn((float) saucePrice);
+        when(cutletMock.getPrice()).thenReturn((float) cutletPrice);
+        when(sausageMock.getPrice()).thenReturn((float) sausagePrice);
 
         burger.setBuns(bunMock);
-        burger.addIngredient(ingredientMock1);
-        burger.addIngredient(ingredientMock2);
-        burger.addIngredient(ingredientMock3);
+        burger.addIngredient(sauceMock);
+        burger.addIngredient(cutletMock);
+        burger.addIngredient(sausageMock);
 
         float actual = burger.getPrice();
         assertEquals(expected, actual, 0.001);
@@ -144,12 +189,12 @@ public class BurgerTest {
     @Test
     @Parameters(source = BurgerTestData.class, method = "getRemoveIngredientData")
     @TestCaseName("[{index}] Удаление ингредиента: индекс {0} → размер {1}")
-    public void removeIngredientShouldDecreaseSize(int removeIndex, int expectedSize) {
+    public void removeIngredientShouldDecreaseSizeParametrized(int removeIndex, int expectedSize) {
         System.out.println("🗑️ Удаление ингредиента: индекс " + removeIndex + " → размер " + expectedSize);
 
-        burger.addIngredient(ingredientMock1);
-        burger.addIngredient(ingredientMock2);
-        burger.addIngredient(ingredientMock3);
+        burger.addIngredient(sauceMock);
+        burger.addIngredient(cutletMock);
+        burger.addIngredient(sausageMock);
 
         burger.removeIngredient(removeIndex);
         assertEquals(expectedSize, burger.ingredients.size());
@@ -165,13 +210,13 @@ public class BurgerTest {
 
         System.out.println("🔄 Перемещение: с " + fromIndex + " на " + toIndex + " → первый '" + expectedFirstName + "'");
 
-        when(ingredientMock1.getName()).thenReturn("соус");
-        when(ingredientMock2.getName()).thenReturn("котлета");
-        when(ingredientMock3.getName()).thenReturn("сосиска");
+        when(sauceMock.getName()).thenReturn("соус");
+        when(cutletMock.getName()).thenReturn("котлета");
+        when(sausageMock.getName()).thenReturn("сосиска");
 
-        burger.addIngredient(ingredientMock1);
-        burger.addIngredient(ingredientMock2);
-        burger.addIngredient(ingredientMock3);
+        burger.addIngredient(sauceMock);
+        burger.addIngredient(cutletMock);
+        burger.addIngredient(sausageMock);
 
         burger.moveIngredient(fromIndex, toIndex);
         assertEquals(expectedFirstName, burger.ingredients.get(0).getName());
@@ -180,7 +225,7 @@ public class BurgerTest {
     @Test
     @Parameters(source = BurgerTestData.class, method = "getReceiptData")
     @TestCaseName("[{index}] Чек: булка '{0}', ингредиент '{1}'")
-    public void getReceiptShouldContainCorrectNames(
+    public void getReceiptShouldContainBunName(
             String bunName,
             String ingredientName,
             String ingredientType) {
@@ -191,18 +236,45 @@ public class BurgerTest {
         when(bunMock.getPrice()).thenReturn(100f);
 
         if (ingredientType.equals("SAUCE")) {
-            when(ingredientMock1.getType()).thenReturn(IngredientType.SAUCE);
+            when(sauceMock.getType()).thenReturn(IngredientType.SAUCE);
         } else {
-            when(ingredientMock1.getType()).thenReturn(IngredientType.FILLING);
+            when(sauceMock.getType()).thenReturn(IngredientType.FILLING);
         }
-        when(ingredientMock1.getName()).thenReturn(ingredientName);
-        when(ingredientMock1.getPrice()).thenReturn(100f);
+        when(sauceMock.getName()).thenReturn(ingredientName);
+        when(sauceMock.getPrice()).thenReturn(100f);
 
         burger.setBuns(bunMock);
-        burger.addIngredient(ingredientMock1);
+        burger.addIngredient(sauceMock);
 
         String receipt = burger.getReceipt();
         assertTrue(receipt.contains(bunName));
+    }
+
+    @Test
+    @Parameters(source = BurgerTestData.class, method = "getReceiptData")
+    @TestCaseName("[{index}] Чек: булка '{0}', ингредиент '{1}'")
+    public void getReceiptShouldContainIngredientName(
+            String bunName,
+            String ingredientName,
+            String ingredientType) {
+
+        System.out.println("🧾 Чек: булка '" + bunName + "', ингредиент '" + ingredientName + "'");
+
+        when(bunMock.getName()).thenReturn(bunName);
+        when(bunMock.getPrice()).thenReturn(100f);
+
+        if (ingredientType.equals("SAUCE")) {
+            when(sauceMock.getType()).thenReturn(IngredientType.SAUCE);
+        } else {
+            when(sauceMock.getType()).thenReturn(IngredientType.FILLING);
+        }
+        when(sauceMock.getName()).thenReturn(ingredientName);
+        when(sauceMock.getPrice()).thenReturn(100f);
+
+        burger.setBuns(bunMock);
+        burger.addIngredient(sauceMock);
+
+        String receipt = burger.getReceipt();
         assertTrue(receipt.contains(ingredientName));
     }
 }
